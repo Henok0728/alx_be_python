@@ -5,4 +5,4 @@ def safe_divide(numerator, denominator):
         return f"Error: Cannot divide by zero."
     except ValueError:
         return f"Error: Please enter numeric values only."
-    return f"The result of the divison is {result:.1f}" 
+    return f"The result of the division is {result:.1f}" 
