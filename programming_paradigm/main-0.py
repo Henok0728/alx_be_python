@@ -1,15 +1,32 @@
 import sys
+import json
 from bank_account import BankAccount
 
+BALANCE_FILE = "balance.json"
+
+def load_balance():
+    try:
+        with open(BALANCE_FILE, "r") as f:
+            data = json.load(f)
+            return data.get("balance", 0.0)
+    except FileNotFoundError:
+        return 100.0  
+
+def save_balance(balance):
+    with open(BALANCE_FILE, "w") as f:
+        json.dump({"balance": balance}, f)
+
 def main():
-    account = BankAccount(100)
+    account = BankAccount(load_balance())
+
     if len(sys.argv) < 2:
-        print("Usage: python main.py <command>:<amount>")
+        print("Usage: python main.py <command>[:<amount>]")
         print("Commands: deposit, withdraw, display")
         sys.exit(1)
 
-    command, *params = sys.argv[1].split(':')
-    amount = float(params[0]) if params else None
+    parts = sys.argv[1].split(":")
+    command = parts[0].lower()
+    amount = float(parts[1]) if len(parts) > 1 else None
 
     if command == "deposit" and amount is not None:
         account.deposit(amount)
@@ -23,6 +40,8 @@ def main():
         account.display_balance()
     else:
         print("Invalid command.")
+
+    save_balance(account.account_balance)
 
 if __name__ == "__main__":
     main()
